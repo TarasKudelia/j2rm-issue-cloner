@@ -1,0 +1,16 @@
+# Basic settings
+debug: "false"
+
+# Jira server
+jira:
+  url:
+    base: "https://PROJECT_NAME.atlassian.net"
+    suffix: "/browse/"
+  host: "PROJECT_NAME.atlassian.net"
+  cookie: "cloud.session.token=some_token"
+
+# Redmine server
+redmine:
+  url: "https://redmine.PROJECT_NAME.com"
+  apiKey: "abcbcbcbaf123"
+  projectName: "PROJECT_NAME"
