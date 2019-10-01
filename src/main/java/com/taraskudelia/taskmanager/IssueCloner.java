@@ -6,6 +6,7 @@ import com.taraskudelia.taskmanager.redmine.RedmineController;
 import com.taraskudelia.taskmanager.util.LogPrinter;
 import com.taskadapter.redmineapi.RedmineException;
 import com.taskadapter.redmineapi.bean.Issue;
+import lombok.extern.slf4j.Slf4j;
 import org.yaml.snakeyaml.Yaml;
 
 import java.io.File;
@@ -13,8 +14,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
 
-
-public class TaskManagerApplication {
+@Slf4j
+public class IssueCloner {
 
     /**
      * YAML file with the required connection data
@@ -40,7 +41,7 @@ public class TaskManagerApplication {
             issueData = jiraController.getIssueByKeyFrom(config.getJira().getUrl().getBase(),
                                                          config.getJira().getUrl().getSuffix(), issueKey);
         } catch (IOException e) {
-            LogPrinter.printError(e.getMessage());
+            LogPrinter.exitWithError(log, e.getMessage());
         }
 
         // Connect to the Redmine
@@ -53,10 +54,10 @@ public class TaskManagerApplication {
             createdIssue = redmineController.createIssue(issueData, config.getRedmine().getProjectName());
             createdIssue = redmineController.publishIssue(createdIssue);
         } catch (RedmineException re) {
-            LogPrinter.printError(re.getMessage());
+            LogPrinter.exitWithError(log, re.getMessage());
         }
-        LogPrinter.printInfo("Done!\n" + (createdIssue.getSubject()));
-        LogPrinter.printInfo(createdIssue.toString());
+        log.info("Done!");
+        log.info(createdIssue.toString());
     }
 
     /**
@@ -66,7 +67,7 @@ public class TaskManagerApplication {
     private static void loadYaml(String yamlLocation) {
         File yamlFile = new File(yamlLocation);
         if (!yamlFile.exists()) {
-            LogPrinter.exitWithError("Can not find " + yamlLocation + " settings file.");
+            LogPrinter.exitWithError(log, "Can not find " + yamlLocation + " settings file.");
         }
 
         // Load yaml file
@@ -74,7 +75,7 @@ public class TaskManagerApplication {
         try (InputStream in = Files.newInputStream(yamlFile.toPath()) ) {
             config = yaml.loadAs(in, ConfigurationModel.class);
         } catch (IOException e) {
-            LogPrinter.exitWithError("Can not parse Yaml file.");
+            LogPrinter.exitWithError(log, "Can not parse Yaml file.");
         }
     }
 
@@ -85,34 +86,31 @@ public class TaskManagerApplication {
      * @param args - command-line arguments.
      */
     private static void validateArguments(String[] args) {
-        int parsedKey = -1;
-
-        final String yamlFileLocation = args[0];
-        final String issueKey = args[1];
-
         // Wrong number of args
         if (args.length != 2) {
             for (String arg : args) {
-                LogPrinter.printInfo(arg);
+                log.info(arg);
             }
-            LogPrinter.exitWithError("Wrong number of arguments.");
-        } else {
-            // load yaml
-            File yamlFile = new File(yamlFileLocation);
-            if (!yamlFile.exists()) {
-                LogPrinter.exitWithError("Can not find " + yamlFileLocation + " settings file.");
-            }
-            // non-integer key
-            try {
-                final String number = issueKey.substring(issueKey.lastIndexOf("-") + 1);
-                parsedKey = Integer.parseInt(number);
-            } catch (NumberFormatException ignore) {
-                LogPrinter.exitWithError("First argument is in a wrong format.");
-            }
+            LogPrinter.exitWithError(log, "Wrong number of arguments.");
         }
-        // non-positive issue key
+
+        int parsedKey = -1;
+        final String yamlFileLocation = args[0];
+        final String issueKey = args[1];
+
+        // load yaml
+        File yamlFile = new File(yamlFileLocation);
+        if (!yamlFile.exists()) {
+            LogPrinter.exitWithError(log, "Can not find " + yamlFileLocation + " settings file.");
+        }
+        try {
+            final String number = issueKey.substring(issueKey.lastIndexOf("-") + 1);
+            parsedKey = Integer.parseInt(number);
+        } catch (NumberFormatException ignore) {
+            LogPrinter.exitWithError(log, "First argument is in a wrong format.");
+        }
         if (parsedKey <= 0) {
-            LogPrinter.exitWithError("Only positive issue_key allowed.");
+            LogPrinter.exitWithError(log, "Only positive issue_key allowed.");
         }
     }
 

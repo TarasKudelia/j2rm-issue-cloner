@@ -83,7 +83,7 @@
                         <manifest>
                             <addClasspath>true</addClasspath>
                             <classpathPrefix>lib/</classpathPrefix>
-                            <mainClass>com.taraskudelia.taskmanager.TaskManagerApplication</mainClass>
+                            <mainClass>com.taraskudelia.taskmanager.IssueCloner</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
@@ -94,7 +94,7 @@
                 <configuration>
                     <archive>
                         <manifest>
-                            <mainClass>com.taraskudelia.taskmanager.TaskManagerApplication</mainClass>
+                            <mainClass>com.taraskudelia.taskmanager.IssueCloner</mainClass>
                         </manifest>
                     </archive>
                     <descriptorRefs>

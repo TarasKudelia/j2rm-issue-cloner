@@ -2,6 +2,7 @@ package com.taraskudelia.taskmanager.jira;
 
 import com.taraskudelia.taskmanager.IssueData;
 import com.taraskudelia.taskmanager.util.LogPrinter;
+import lombok.extern.slf4j.Slf4j;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import org.apache.commons.lang3.StringUtils;
@@ -16,13 +17,14 @@ import java.util.Map;
  * @author Taras Kudelia
  * @since 19/09/2019
  */
+@Slf4j
 public class JiraController {
 
     public JiraController(String cookie, String host) {
         if (StringUtils.isBlank(cookie)) {
-            LogPrinter.exitWithError("No cookie received for Jira controller.");
+            LogPrinter.exitWithError(log, "No cookie received for Jira controller.");
         } else if (StringUtils.isBlank(host)) {
-            LogPrinter.exitWithError("No host received for Jira controller.");
+            LogPrinter.exitWithError(log, "No host received for Jira controller.");
         }
         requestHeaders.put("Cookie", cookie);
         requestHeaders.put("Host", host);

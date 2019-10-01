@@ -1,9 +1,12 @@
 package com.taraskudelia.taskmanager.util;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * @author Taras Kudelia
  * @since 20.09.19
  */
+@Slf4j
 public class DateUtil {
 
     private final static String[] MONTH_NAMES = {
@@ -13,7 +16,7 @@ public class DateUtil {
 
     public static String getMonthName(int monthNumber) {
         if (monthNumber < 0 || monthNumber > 11) {
-            LogPrinter.printError("Incorrect month number " + monthNumber + ".");
+            log.error("Incorrect month number " + monthNumber);
             return null;
         }
         return MONTH_NAMES[monthNumber];

@@ -1,4 +1,5 @@
-# Basic settings
+# Debug settings
+# false - work as intended; true - creates task with the name "test+random_integer"
 debug: "false"
 
 # Jira server
